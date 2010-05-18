@@ -1,0 +1,14 @@
+#stack {
+	width:512px;
+	height:512px;
+	margin:0 auto;
+	background:#000;
+}
+#stack .layer {
+	width:512px;
+	height:512px;
+	float:left;
+	position:absolute;
+}
+canvas.layer {
+}
