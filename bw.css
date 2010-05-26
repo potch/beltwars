@@ -1,3 +1,10 @@
+@font-face {
+  font-family: "Orbitron Medium";
+  src: url("./fonts/orbitron-medium.otf");
+}
+body {
+	font-family:"Orbitron Medium", sans-serif;
+}
 #stack {
 	width:512px;
 	height:512px;

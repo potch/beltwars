@@ -3,20 +3,20 @@
 <plist version="1.0">
 <dict>
 	<key>currentDocument</key>
-	<string>beltwars/beltwars.js</string>
+	<string>beltwars.js</string>
 	<key>documents</key>
 	<array>
 		<dict>
 			<key>filename</key>
 			<string>bw.css</string>
 			<key>lastUsed</key>
-			<date>2010-05-15T03:50:47Z</date>
+			<date>2010-05-18T23:20:13Z</date>
 		</dict>
 		<dict>
 			<key>filename</key>
 			<string>beltwars.js</string>
 			<key>lastUsed</key>
-			<date>2010-05-15T03:50:47Z</date>
+			<date>2010-05-18T23:20:13Z</date>
 			<key>selected</key>
 			<true/>
 		</dict>
@@ -24,49 +24,49 @@
 			<key>filename</key>
 			<string>index.html</string>
 			<key>lastUsed</key>
-			<date>2010-05-15T03:50:28Z</date>
+			<date>2010-05-18T23:18:09Z</date>
 		</dict>
 	</array>
 	<key>fileHierarchyDrawerWidth</key>
 	<integer>200</integer>
 	<key>metaData</key>
 	<dict>
-		<key>beltwars/beltwars.js</key>
+		<key>beltwars.js</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>24</integer>
 				<key>line</key>
-				<integer>41</integer>
+				<integer>242</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
-			<integer>14</integer>
+			<integer>216</integer>
 		</dict>
-		<key>beltwars/bw.css</key>
+		<key>bw.css</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>0</integer>
+				<integer>39</integer>
 				<key>line</key>
-				<integer>13</integer>
+				<integer>2</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
 			<key>firstVisibleLine</key>
 			<integer>0</integer>
 		</dict>
-		<key>beltwars/index.html</key>
+		<key>index.html</key>
 		<dict>
 			<key>caret</key>
 			<dict>
 				<key>column</key>
-				<integer>36</integer>
+				<integer>17</integer>
 				<key>line</key>
-				<integer>9</integer>
+				<integer>10</integer>
 			</dict>
 			<key>firstVisibleColumn</key>
 			<integer>0</integer>
@@ -76,13 +76,13 @@
 	</dict>
 	<key>openDocuments</key>
 	<array>
-		<string>beltwars/index.html</string>
-		<string>beltwars/beltwars.js</string>
-		<string>beltwars/bw.css</string>
+		<string>index.html</string>
+		<string>beltwars.js</string>
+		<string>bw.css</string>
 	</array>
 	<key>showFileHierarchyDrawer</key>
 	<true/>
 	<key>windowFrame</key>
-	<string>{{721, 196}, {955, 832}}</string>
+	<string>{{275, 29}, {955, 832}}</string>
 </dict>
 </plist>

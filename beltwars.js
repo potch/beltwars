@@ -141,22 +141,33 @@ RadPoly.prototype = {
 		_ctx.stroke();
 		_ctx.restore();
 	},
-	bounds: function(_o) {
+	bounds: function(_o,_ast) {
+		var hit = false;
 		var p = this.pts;
 		var o = new Point(0,0);
+		var ap = pos;
+		var ax = ap.x, ay = ap.y;
 		for (var i=0; i<p.length; i++) {
+			// layer[0].strokeRect(ax+_o.x,ay+_o.y,1,1);
+			// layer[0].beginPath();
+			// layer[0].moveTo(ax+p[i].x,ay+p[i].y);
+			// layer[0].lineTo(ax+p[(i+1)%p.length].x,ay+p[(i+1)%p.length].y);
+			// layer[0].lineTo(ax+o.x,ay+o.y);
+			// layer[0].lineTo(ax+p[i].x,ay+p[i].y);
 			if (inTriangle(o,p[i],p[(i+1)%p.length],_o)) {
-				return true;
+				// layer[0].fill();
+				hit = true;
 			}
+			// layer[0].stroke();
 		}
-		return false;
+		return hit;
 	}
 };
 
-function Bullet(_o,_v) {
+function Bullet(_o,_v,_l) {
 	this.pos = new Point(_o.x, _o.y);
 	this.vel = new Point(_v.x, _v.y);
-	this.life = 100;
+	this.life = (_l != undefined) ? _l : 100;
 }
 Bullet.prototype = {
 	draw : function(_ctx) {
@@ -187,10 +198,10 @@ Bullet.prototype = {
 	hits : function(_rp, _p, _q) {
 
 		var p1 = this.pos.sub(_p).toPolar();
-		p1 = new Point(p1.q+_q,p1.r,true);		
+		p1 = new Point(_q-p1.q,p1.r,true);		
 		var p2 = this.pos.add(this.vel);
 		p2 = p2.sub(_p).toPolar();
-		p2 = new Point(p2.q+_q,p2.r,true);		
+		p2 = new Point(_q-p2.q,p2.r,true);		
 		
 		if (_rp.bounds(p1) || _rp.bounds(p2)) {
 			return true;
@@ -214,24 +225,26 @@ function Asteroid(_o,_v,_r,_q) {
 	this.rot = (_q != undefined) ? _q : 1;
 	var arr = [];
 	for (var i=0; i<18; i++) {
-		arr.push([Math.random()*_r/2 + i*20, Math.random() * _r/2 + _r]);
+		arr.push([Math.random()*_r/3 + i*20, Math.random() * _r/3 + _r]);
 	}
 	this.poly = new RadPoly(arr);
 }
 Asteroid.prototype = {
 	draw : function(_ctx) {
-		for (var i in [0,1,2,3,4,5,6,7,8]) {
-			if (this.pos.x+tbl[i][0] + pos.x > WINDOW_LEFT &&
-				this.pos.x+tbl[i][0] + pos.x < WINDOW_RIGHT &&
-				this.pos.y+tbl[i][1] + pos.y > WINDOW_TOP &&
-				this.pos.y+tbl[i][1] + pos.y < WINDOW_BOTTOM
+		for (var i=0; i<tbl.length; i++) {
+			var px = this.pos.x+tbl[i][0];
+			var py = this.pos.y+tbl[i][1];
+			if (px > WINDOW_LEFT &&
+			px < WINDOW_RIGHT &&
+			py > WINDOW_TOP &&
+			py < WINDOW_BOTTOM
 			){
 				_ctx.save();
-				_ctx.translate(this.pos.x+tbl[i][0],this.pos.y+tbl[i][1]);
+				_ctx.translate(px,py);
 				_ctx.rotate(this.ang*RAD);
 				this.poly.draw(_ctx,new Point(0,0));
 				_ctx.restore();
-				return;
+				//return;
 			}
 		}
 	},
@@ -245,18 +258,18 @@ Asteroid.prototype = {
 	},
 	bounds: function(_p) {
 		var p = _p.add(this.pos).toPolar();
-		p = new Point(p.q-this.ang,p.r,true);
-		return this.poly.bounds(p);
+		p = new Point(this.ang-p.q,p.r,true);
+		this.poly.bounds(p,this.pos);
 	}
 }
 
 var field = [];
 
-for (var i=0; i<4; i++) {
+for (var i=0; i<5; i++) {
 	field.push(new Asteroid(
 		new Point(Math.random() * BOARD_WIDTH - BOARD_WIDTH/2, Math.random() * BOARD_HEIGHT - BOARD_HEIGHT/2),
 		new Point(Math.random() * 3 - 2, Math.random() * 3 - 2),
-		60));
+		60,1));
 }
 
 function split(n) {
@@ -296,9 +309,18 @@ function cleanUp() {
 function fire() {
 	var nb = new Bullet(
 		(new Point(-angle, 11, true)).sub(pos),
-		(new Point(-angle, 10 + force.toPolar().r, true))
-		);
+		(new Point(-angle, 4 + force.toPolar().r, true))
+		,200);
 	shots.push(nb);
+}
+function blast() {
+	for (var i=0;i<20;i++) {
+		var nb = new Bullet(
+			(new Point(-angle + i*18, 11, true)).sub(pos),
+			(new Point(-angle + i*18, 10 + force.toPolar().r, true)),
+			20);
+		shots.push(nb);
+	}
 }
 
 var layerEls = document.getElementsByClassName("layer");
@@ -315,12 +337,13 @@ for (var i=0; i<layerEls.length; i++) {
 var shots = [];
 
 layer[1].strokeStyle = "#3f3";
-layer[1].font = "12pt Helvetica";
+layer[1].font = '12px "Orbitron Medium"';
 layer[1].fillStyle= "#fff";
 layer[1].save();
 
 
 layer[0].strokeStyle = "#fff";
+layer[0].fillStyle = "#3f3";
 layer[0].lineWidth = 2;
 layer[0].translate(256,256);
 layer[0].scale(-1,1);
@@ -354,6 +377,9 @@ window.onkeydown = function(e) {
 		case 38: //up
 			thrust.f = 1;
 		break;
+		case 65: //up
+			blast();
+		break;
 		case 32: //space
 			fire();
 		break;
@@ -375,11 +401,16 @@ window.onkeyup = function(e) {
 		break;
  	}
 }
+var looptime = 0;
+var startTime = (new Date()).getTime();
 setInterval(function () {
+	
+	startTime = (new Date()).getTime();
+	
 	angle += (thrust.l - thrust.r) * 5;
 	angle = (angle < 0 ? angle + 360 : angle) % 360;
-	force.x += Math.sin(angle * RAD) * thrust.f/10;
-	force.y -= Math.cos(angle * RAD) * thrust.f/10;
+	force.x -= Math.sin(angle * RAD) * thrust.f/10;
+	force.y += Math.cos(angle * RAD) * thrust.f/10;
 	pos.x += force.x;
 	pos.y += force.y;
 	pos.x = wrap(pos.x, MIN[0], MAX[0]);
@@ -401,7 +432,7 @@ setInterval(function () {
 	player.draw(layer[0], new Point(0,0));
 
 	layer[0].rotate(-angle * RAD);
-	layer[0].translate(pos.x,pos.y);
+	layer[0].translate(-pos.x,-pos.y);
 
 	var tests = 0;
 	for (var i=0;i<shots.length;i++) {
@@ -441,7 +472,7 @@ setInterval(function () {
 					splitAsteroidStack[i] = true;
 				}
 			}
-			var tr = a.r+10;
+			var tr = a.r+20;
 			for (var j=0;j<shots.length;j++) {
 				var b = shots[j];
 				var hit = false;
@@ -463,14 +494,26 @@ setInterval(function () {
 			}		
 		
 			a.draw(layer[0]);
+			layer[1].fillRect(a.pos.x/2+255,a.pos.y/-2+255,3,3);
+			layer[1].fillRect(pos.x/2+255,pos.y/-2+255,3,3);
 		}
 	}
 	
 	cleanUp();
+	
+	layer[1].fillText(Math.ceil(looptime) + "ms",10,500);
 
-	layer[1].fillText(field.length + " rocks remaining",20,20);
+	layer[1].fillText(Math.floor(pos.x) + ", " + Math.floor(pos.y),100,500);
+	
+	layer[1].fillText(field.length + " rocks remaining",10,20);
+
+	layer[1].beginPath();
+	layer[1].arc(pos.x/2+256,pos.y/2+256,128,-angle*RAD,PI-angle*RAD,true);
+	layer[1].stroke();
+
 
 	layer[0].restore();
-	
+
+	looptime = Math.round(looptime * 90 + ((new Date()).getTime() - startTime) * 10) / 100;
 
 },20);
